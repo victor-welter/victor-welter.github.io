@@ -1,1 +1,85 @@
 .superpowers/
+
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be version controlled
+.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# iOS/macOS
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbxuser
+**/ios/**/*.perspectivev3
+**/ios/**/*.xcconfig
+**/ios/**/*.xcworkspace
+**/ios/**/Flutter/Flutter.framework
+**/ios/**/Flutter/Flutter.podspec
+**/ios/**/Flutter/Generated.xcconfig
+**/ios/**/Flutter/ephemeralmodules.txt
+**/ios/**/Flutter/flutter_export_environment.sh
+**/ios/**/Flutter/flutter_export_environment.sh.bak
+**/ios/**/GeneratedPluginRegistrant.swift
+**/ios/**/GoogleService-Info.plist
+**/ios/**/Runner.xcodeproj/project.xcworkspace/
+**/ios/**/Podfile
+**/ios/**/Podfile.lock
+**/ios/**/Runner.xcodeproj/
+**/ios/Pods/
+
+# macOS
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+**/macos/Flutter/Flutter-Release.podspec
+**/macos/Flutter/ephemeralmodules.txt
+
+# Android
+**/android/.gradle
+**/android/.gradle/
+**/android/app/debug
+**/android/app/profile
+**/android/app/release
+**/android/key.properties
+**/android/key.jks
+**/android/local.properties
+**/android/GeneratedPluginRegistrant.gradle
+
+# Exceptions to above rules.
+!**/ios/**/default.mode1v3
+!**/ios/**/default.mode2v3
+!**/ios/**/default.pbxuser
+!**/ios/**/default.perspectivev3
+!/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
