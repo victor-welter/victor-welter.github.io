@@ -90,11 +90,20 @@ class _ThemeToggleButton extends StatelessWidget {
     return ListenableBuilder(
       listenable: themeController,
       builder: (context, _) {
-        final isDark = themeController.mode == ThemeMode.dark;
+        // `mode` alone is ambiguous when it's `system`: resolve the mode the
+        // visitor is actually seeing (accounting for the platform's current
+        // brightness) so the icon and the tap target always agree with what
+        // is on screen, including on the very first tap.
+        final isDark =
+            themeController.mode == ThemeMode.dark ||
+            (themeController.mode == ThemeMode.system &&
+                MediaQuery.platformBrightnessOf(context) == Brightness.dark);
         return IconButton(
           icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
           tooltip: 'Alternar tema',
-          onPressed: themeController.toggle,
+          onPressed: () => themeController.setMode(
+            isDark ? ThemeMode.light : ThemeMode.dark,
+          ),
         );
       },
     );

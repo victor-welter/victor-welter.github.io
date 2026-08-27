@@ -45,4 +45,27 @@ void main() {
     await controller.toggle();
     expect(controller.mode, ThemeMode.light);
   });
+
+  test('with null preferences, defaults to system mode', () {
+    final controller = ThemeController(null);
+    expect(controller.mode, ThemeMode.system);
+  });
+
+  test(
+    'with null preferences, setMode and toggle still update mode and '
+    'notify listeners without throwing',
+    () async {
+      final controller = ThemeController(null);
+      var notifyCount = 0;
+      controller.addListener(() => notifyCount++);
+
+      await controller.setMode(ThemeMode.dark);
+      expect(controller.mode, ThemeMode.dark);
+      expect(notifyCount, 1);
+
+      await controller.toggle();
+      expect(controller.mode, ThemeMode.light);
+      expect(notifyCount, 2);
+    },
+  );
 }
