@@ -50,18 +50,28 @@ class AppShell extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Victor Welter'),
         actions: [
-          for (final destination in navDestinations)
-            TextButton(
-              onPressed: () => context.go(destination.path),
-              child: Text(
-                destination.label,
-                style: TextStyle(
-                  fontWeight: currentPath == destination.path
-                      ? FontWeight.bold
-                      : FontWeight.normal,
-                ),
+          Flexible(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final destination in navDestinations)
+                    TextButton(
+                      onPressed: () => context.go(destination.path),
+                      child: Text(
+                        destination.label,
+                        style: TextStyle(
+                          fontWeight: currentPath == destination.path
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
+          ),
           themeToggle,
         ],
       ),

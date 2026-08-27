@@ -1,20 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const PortfolioApp());
-}
+import 'app/app.dart';
+import 'core/theme/theme_controller.dart';
 
-class PortfolioApp extends StatelessWidget {
-  const PortfolioApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Victor Welter',
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Center(child: Text('Victor Welter — Portfólio')),
-      ),
-    );
-  }
+Future<void> main() async {
+  usePathUrlStrategy();
+  WidgetsFlutterBinding.ensureInitialized();
+  final preferences = await SharedPreferences.getInstance();
+  runApp(PortfolioApp(themeController: ThemeController(preferences)));
 }
