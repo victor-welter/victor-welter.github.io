@@ -1,0 +1,117 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../layout/breakpoints.dart';
+import '../theme/theme_controller.dart';
+import '../theme/theme_scope.dart';
+
+class NavDestinationData {
+  const NavDestinationData({required this.label, required this.path});
+
+  final String label;
+  final String path;
+}
+
+const List<NavDestinationData> navDestinations = [
+  NavDestinationData(label: 'Home', path: '/'),
+  NavDestinationData(label: 'Sobre', path: '/sobre'),
+  NavDestinationData(label: 'Experiência', path: '/experiencia'),
+  NavDestinationData(label: 'Formação', path: '/formacao'),
+  NavDestinationData(label: 'Skills', path: '/skills'),
+  NavDestinationData(label: 'Projetos', path: '/projetos'),
+  NavDestinationData(label: 'Currículo', path: '/curriculo'),
+  NavDestinationData(label: 'Contato', path: '/contato'),
+];
+
+class AppShell extends StatelessWidget {
+  const AppShell({required this.currentPath, required this.child, super.key});
+
+  final String currentPath;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final themeToggle = _ThemeToggleButton(
+      themeController: ThemeScope.of(context),
+    );
+
+    if (context.isMobile) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Victor Welter'),
+          actions: [themeToggle],
+        ),
+        drawer: _AppDrawer(currentPath: currentPath),
+        body: child,
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Victor Welter'),
+        actions: [
+          for (final destination in navDestinations)
+            TextButton(
+              onPressed: () => context.go(destination.path),
+              child: Text(
+                destination.label,
+                style: TextStyle(
+                  fontWeight: currentPath == destination.path
+                      ? FontWeight.bold
+                      : FontWeight.normal,
+                ),
+              ),
+            ),
+          themeToggle,
+        ],
+      ),
+      body: child,
+    );
+  }
+}
+
+class _ThemeToggleButton extends StatelessWidget {
+  const _ThemeToggleButton({required this.themeController});
+
+  final ThemeController themeController;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: themeController,
+      builder: (context, _) {
+        final isDark = themeController.mode == ThemeMode.dark;
+        return IconButton(
+          icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
+          tooltip: 'Alternar tema',
+          onPressed: themeController.toggle,
+        );
+      },
+    );
+  }
+}
+
+class _AppDrawer extends StatelessWidget {
+  const _AppDrawer({required this.currentPath});
+
+  final String currentPath;
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        children: [
+          for (final destination in navDestinations)
+            ListTile(
+              title: Text(destination.label),
+              selected: currentPath == destination.path,
+              onTap: () {
+                Navigator.of(context).pop();
+                context.go(destination.path);
+              },
+            ),
+        ],
+      ),
+    );
+  }
+}
