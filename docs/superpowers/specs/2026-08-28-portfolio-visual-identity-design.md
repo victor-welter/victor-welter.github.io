@@ -63,10 +63,17 @@ contradicts the "light is neutral, not a blue mirror" decision above.
 | Background | `#FFFFFF` | Scaffold background |
 | Surface | `#FAFAFA` | AppBar, cards |
 | Outline / divider | `#E5E5E5` | Borders, dividers |
-| Text — primary | `#2B2B2B` | Headings, primary body text |
+| Text — primary | `#2B2B2B` | Headings, primary body text, **inactive** nav labels |
 | Text — secondary | `#6B6B6B` | Secondary/muted text |
-| Accent (primary) | `#2B2B2B` (dark gray, **not blue**) | Active nav label, buttons, links, selected states |
+| Accent (primary) | `#0969DA` (restrained blue — deeper/less saturated than dark mode's, so it reads as calm rather than a loud call-to-action) | **Only**: links, primary buttons, the active nav label, hover/pressed states |
 | On-accent | `#FFFFFF` | Text/icons drawn on top of the accent color |
+
+Light mode is not colorless — the point is restraint, not elimination. General
+chrome (backgrounds, borders, body text, headings, inactive nav items) stays
+strictly grayscale; the accent blue is reserved for things the user can act on
+or that are currently active/selected, so it reads as "signal," not decoration.
+This is a different, more muted blue than dark mode's `#4D8DFF` — dark
+backgrounds need a punchier accent to read clearly; light backgrounds don't.
 
 Both schemes stay Material 3 (`useMaterial3: true`, matching Fase 3).
 
