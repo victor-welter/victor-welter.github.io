@@ -41,20 +41,24 @@ void main() {
     expect(find.widgetWithText(TextButton, 'Sobre'), findsOneWidget);
   });
 
-  testWidgets(
-    'renders without a layout overflow at tablet widths',
-    (tester) async {
-      // Regression test for the RenderFlex overflow that existed at widths
-      // in the ~600-1024px tablet band before the nav row was wrapped in
-      // Flexible + a horizontal SingleChildScrollView. testWidgets fails on
-      // any FlutterError (including a layout overflow) raised during pump,
-      // so simply completing pumpShell without throwing is the guard.
-      await pumpShell(tester, const Size(800, 800));
+  group('tablet widths (600-1024px) show Home + a "Mais" overflow menu', () {
+    for (final width in <double>[650, 800, 950]) {
+      testWidgets('at ${width.toInt()}px', (tester) async {
+        await pumpShell(tester, Size(width, 800));
 
-      expect(tester.takeException(), isNull);
-      expect(find.widgetWithText(TextButton, 'Sobre'), findsOneWidget);
-    },
-  );
+        expect(tester.takeException(), isNull);
+        expect(find.byIcon(Icons.menu), findsNothing);
+        expect(find.widgetWithText(TextButton, 'Home'), findsOneWidget);
+        expect(find.widgetWithText(TextButton, 'Sobre'), findsNothing);
+        expect(find.text('Mais'), findsOneWidget);
+
+        await tester.tap(find.text('Mais'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Sobre'), findsOneWidget);
+      });
+    }
+  });
 
   testWidgets('shows a theme toggle button on both layouts', (tester) async {
     await pumpShell(tester, const Size(400, 800));

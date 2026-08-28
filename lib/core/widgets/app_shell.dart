@@ -46,6 +46,60 @@ class AppShell extends StatelessWidget {
       );
     }
 
+    if (context.isTablet) {
+      final home = navDestinations.first;
+      final overflowDestinations = navDestinations.skip(1);
+
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Victor Welter'),
+          actions: [
+            TextButton(
+              onPressed: () => context.go(home.path),
+              child: Text(
+                home.label,
+                style: TextStyle(
+                  fontWeight: currentPath == home.path
+                      ? FontWeight.bold
+                      : FontWeight.normal,
+                ),
+              ),
+            ),
+            PopupMenuButton<String>(
+              tooltip: 'Mais opções de navegação',
+              onSelected: (path) => context.go(path),
+              itemBuilder: (context) => [
+                for (final destination in overflowDestinations)
+                  PopupMenuItem<String>(
+                    value: destination.path,
+                    child: Text(
+                      destination.label,
+                      style: TextStyle(
+                        fontWeight: currentPath == destination.path
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
+                    ),
+                  ),
+              ],
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Mais'),
+                    Icon(Icons.arrow_drop_down),
+                  ],
+                ),
+              ),
+            ),
+            themeToggle,
+          ],
+        ),
+        body: child,
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Victor Welter'),
