@@ -46,6 +46,9 @@ class AppTheme {
       onSecondary: _darkOnAccent,
       surface: _darkSurface,
       onSurface: _darkTextPrimary,
+      // Design spec: dark mode's inactive/unselected nav labels use the
+      // muted secondary text color, not the primary text color.
+      onSurfaceVariant: _darkTextSecondary,
       outline: _darkOutline,
       error: _darkError,
       onError: _darkOnAccent,
@@ -66,6 +69,10 @@ class AppTheme {
       onSecondary: _lightOnAccent,
       surface: _lightSurface,
       onSurface: _lightTextPrimary,
+      // Design spec: light mode's inactive/unselected nav labels use the
+      // same grayscale primary text color as headings/body text — the
+      // accent is reserved for the active label only, unlike dark mode.
+      onSurfaceVariant: _lightTextPrimary,
       outline: _lightOutline,
       error: _lightError,
       onError: _lightOnAccent,

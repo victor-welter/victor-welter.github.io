@@ -48,6 +48,27 @@ void main() {
     },
   );
 
+  testWidgets(
+    'dark theme uses the muted secondary text color for inactive nav labels',
+    (tester) async {
+      expect(
+        AppTheme.dark.colorScheme.onSurfaceVariant,
+        const Color(0xFF8B949E),
+      );
+    },
+  );
+
+  testWidgets(
+    'light theme uses the primary (grayscale) text color for inactive nav '
+    'labels, not the accent',
+    (tester) async {
+      expect(
+        AppTheme.light.colorScheme.onSurfaceVariant,
+        const Color(0xFF2B2B2B),
+      );
+    },
+  );
+
   testWidgets('headings use Space Grotesk', (tester) async {
     // google_fonts composes `fontFamily` with an internal weight/style
     // disambiguator (e.g. "SpaceGrotesk_regular") that's an implementation

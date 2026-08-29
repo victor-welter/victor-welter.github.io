@@ -41,6 +41,34 @@ void main() {
     expect(find.widgetWithText(TextButton, 'Sobre'), findsOneWidget);
   });
 
+  testWidgets(
+    'desktop nav uses accent for the active label and muted text for '
+    'inactive labels',
+    (tester) async {
+      await pumpShell(tester, const Size(1300, 800));
+
+      final colorScheme = Theme.of(
+        tester.element(find.byType(AppShell)),
+      ).colorScheme;
+
+      final activeButton = tester.widget<TextButton>(
+        find.widgetWithText(TextButton, 'Home'),
+      );
+      final inactiveButton = tester.widget<TextButton>(
+        find.widgetWithText(TextButton, 'Sobre'),
+      );
+
+      expect(
+        activeButton.style?.foregroundColor?.resolve(<WidgetState>{}),
+        colorScheme.primary,
+      );
+      expect(
+        inactiveButton.style?.foregroundColor?.resolve(<WidgetState>{}),
+        colorScheme.onSurfaceVariant,
+      );
+    },
+  );
+
   group('tablet widths (600-1024px) show Home + a "Mais" overflow menu', () {
     for (final width in <double>[650, 800, 950]) {
       testWidgets('at ${width.toInt()}px', (tester) async {
@@ -52,10 +80,22 @@ void main() {
         expect(find.widgetWithText(TextButton, 'Sobre'), findsNothing);
         expect(find.text('Mais'), findsOneWidget);
 
+        final colorScheme = Theme.of(
+          tester.element(find.byType(AppShell)),
+        ).colorScheme;
+        final homeButton = tester.widget<TextButton>(
+          find.widgetWithText(TextButton, 'Home'),
+        );
+        expect(
+          homeButton.style?.foregroundColor?.resolve(<WidgetState>{}),
+          colorScheme.primary,
+        );
+
         await tester.tap(find.text('Mais'));
         await tester.pumpAndSettle();
 
-        expect(find.text('Sobre'), findsOneWidget);
+        final sobreItem = tester.widget<Text>(find.text('Sobre'));
+        expect(sobreItem.style?.color, colorScheme.onSurfaceVariant);
       });
     }
   });

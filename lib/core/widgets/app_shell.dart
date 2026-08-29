@@ -34,6 +34,13 @@ class AppShell extends StatelessWidget {
     final themeToggle = _ThemeToggleButton(
       themeController: ThemeScope.of(context),
     );
+    final colorScheme = Theme.of(context).colorScheme;
+
+    // TextButton's Material 3 default foreground is always colorScheme.primary,
+    // regardless of the TextTheme's own label color — so the active/inactive
+    // distinction from the design spec must be set explicitly per button.
+    Color navLabelColor(String path) =>
+        currentPath == path ? colorScheme.primary : colorScheme.onSurfaceVariant;
 
     if (context.isMobile) {
       return Scaffold(
@@ -56,6 +63,9 @@ class AppShell extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => context.go(home.path),
+              style: TextButton.styleFrom(
+                foregroundColor: navLabelColor(home.path),
+              ),
               child: Text(
                 home.label,
                 style: TextStyle(
@@ -75,6 +85,7 @@ class AppShell extends StatelessWidget {
                     child: Text(
                       destination.label,
                       style: TextStyle(
+                        color: navLabelColor(destination.path),
                         fontWeight: currentPath == destination.path
                             ? FontWeight.bold
                             : FontWeight.normal,
@@ -113,6 +124,9 @@ class AppShell extends StatelessWidget {
                   for (final destination in navDestinations)
                     TextButton(
                       onPressed: () => context.go(destination.path),
+                      style: TextButton.styleFrom(
+                        foregroundColor: navLabelColor(destination.path),
+                      ),
                       child: Text(
                         destination.label,
                         style: TextStyle(
