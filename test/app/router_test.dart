@@ -28,10 +28,7 @@ void main() {
     app.router.go('/projetos');
     await tester.pumpAndSettle();
 
-    expect(
-      find.text('PLACEHOLDER: cards de projetos (Fase 6).'),
-      findsOneWidget,
-    );
+    expect(find.text('AutoConnect'), findsOneWidget);
   });
 
   testWidgets('shows the not-found page for an unknown route', (tester) async {
