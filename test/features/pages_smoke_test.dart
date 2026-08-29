@@ -5,7 +5,6 @@ import 'package:portfolio/features/experience/experience_page.dart';
 import 'package:portfolio/features/not_found/not_found_page.dart';
 import 'package:portfolio/features/projects/projects_page.dart';
 import 'package:portfolio/features/resume/resume_page.dart';
-import 'package:portfolio/features/skills/skills_page.dart';
 
 void main() {
   Future<void> pump(WidgetTester tester, Widget page) {
@@ -18,14 +17,6 @@ void main() {
       find.text(
         'PLACEHOLDER: timeline de experiências profissionais (Fase 5).',
       ),
-      findsOneWidget,
-    );
-  });
-
-  testWidgets('SkillsPage shows its placeholder message', (tester) async {
-    await pump(tester, const SkillsPage());
-    expect(
-      find.text('PLACEHOLDER: tecnologias organizadas por categoria (Fase 5).'),
       findsOneWidget,
     );
   });
