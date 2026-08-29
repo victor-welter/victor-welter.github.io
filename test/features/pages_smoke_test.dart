@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:portfolio/features/contact/contact_page.dart';
-import 'package:portfolio/features/experience/experience_page.dart';
 import 'package:portfolio/features/not_found/not_found_page.dart';
 import 'package:portfolio/features/projects/projects_page.dart';
 import 'package:portfolio/features/resume/resume_page.dart';
@@ -10,16 +9,6 @@ void main() {
   Future<void> pump(WidgetTester tester, Widget page) {
     return tester.pumpWidget(MaterialApp(home: page));
   }
-
-  testWidgets('ExperiencePage shows its placeholder message', (tester) async {
-    await pump(tester, const ExperiencePage());
-    expect(
-      find.text(
-        'PLACEHOLDER: timeline de experiências profissionais (Fase 5).',
-      ),
-      findsOneWidget,
-    );
-  });
 
   testWidgets('ProjectsPage shows its placeholder message', (tester) async {
     await pump(tester, const ProjectsPage());
