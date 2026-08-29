@@ -4,7 +4,6 @@ import 'package:portfolio/features/about/about_page.dart';
 import 'package:portfolio/features/contact/contact_page.dart';
 import 'package:portfolio/features/education/education_page.dart';
 import 'package:portfolio/features/experience/experience_page.dart';
-import 'package:portfolio/features/home/home_page.dart';
 import 'package:portfolio/features/not_found/not_found_page.dart';
 import 'package:portfolio/features/projects/projects_page.dart';
 import 'package:portfolio/features/resume/resume_page.dart';
@@ -14,14 +13,6 @@ void main() {
   Future<void> pump(WidgetTester tester, Widget page) {
     return tester.pumpWidget(MaterialApp(home: page));
   }
-
-  testWidgets('HomePage shows its placeholder message', (tester) async {
-    await pump(tester, const HomePage());
-    expect(
-      find.text('PLACEHOLDER: apresentação principal da Home (Fase 5).'),
-      findsOneWidget,
-    );
-  });
 
   testWidgets('AboutPage shows its placeholder message', (tester) async {
     await pump(tester, const AboutPage());

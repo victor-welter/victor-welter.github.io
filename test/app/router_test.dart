@@ -17,10 +17,7 @@ void main() {
     await tester.pumpWidget(await buildApp());
     await tester.pumpAndSettle();
 
-    expect(
-      find.text('PLACEHOLDER: apresentação principal da Home (Fase 5).'),
-      findsOneWidget,
-    );
+    expect(find.text('Víctor Welter'), findsOneWidget);
   });
 
   testWidgets('navigates to the projects route', (tester) async {
