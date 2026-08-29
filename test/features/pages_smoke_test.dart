@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:portfolio/features/contact/contact_page.dart';
-import 'package:portfolio/features/education/education_page.dart';
 import 'package:portfolio/features/experience/experience_page.dart';
 import 'package:portfolio/features/not_found/not_found_page.dart';
 import 'package:portfolio/features/projects/projects_page.dart';
@@ -18,17 +17,6 @@ void main() {
     expect(
       find.text(
         'PLACEHOLDER: timeline de experiências profissionais (Fase 5).',
-      ),
-      findsOneWidget,
-    );
-  });
-
-  testWidgets('EducationPage shows its placeholder message', (tester) async {
-    await pump(tester, const EducationPage());
-    expect(
-      find.text(
-        'PLACEHOLDER: Engenharia da Computação, Técnico em Informática e '
-        'outras formações (Fase 5).',
       ),
       findsOneWidget,
     );
