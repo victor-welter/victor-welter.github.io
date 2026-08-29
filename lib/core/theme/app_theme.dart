@@ -118,7 +118,7 @@ class AppTheme {
       colorScheme: colorScheme,
       scaffoldBackgroundColor: scaffoldBackground,
       textTheme: textTheme,
-      cardTheme: CardTheme(color: colorScheme.surface, shape: shape),
+      cardTheme: CardThemeData(color: colorScheme.surface, shape: shape),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(shape: shape),
       ),
