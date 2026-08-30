@@ -14,7 +14,10 @@ import '../features/skills/skills_page.dart';
 GoRouter buildAppRouter() {
   return GoRouter(
     initialLocation: '/',
-    errorBuilder: (context, state) => const NotFoundPage(),
+    errorBuilder: (context, state) => AppShell(
+      currentPath: state.uri.path,
+      child: const NotFoundPage(),
+    ),
     routes: [
       ShellRoute(
         builder: (context, state, child) => AppShell(

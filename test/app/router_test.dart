@@ -31,14 +31,18 @@ void main() {
     expect(find.text('AutoConnect'), findsOneWidget);
   });
 
-  testWidgets('shows the not-found page for an unknown route', (tester) async {
-    final app = await buildApp();
-    await tester.pumpWidget(app);
-    await tester.pumpAndSettle();
+  testWidgets(
+    'shows the not-found page for an unknown route, with the nav still available',
+    (tester) async {
+      final app = await buildApp();
+      await tester.pumpWidget(app);
+      await tester.pumpAndSettle();
 
-    app.router.go('/rota-que-nao-existe');
-    await tester.pumpAndSettle();
+      app.router.go('/rota-que-nao-existe');
+      await tester.pumpAndSettle();
 
-    expect(find.text('Página não encontrada'), findsOneWidget);
-  });
+      expect(find.text('Página não encontrada'), findsOneWidget);
+      expect(find.text('Home'), findsOneWidget);
+    },
+  );
 }
