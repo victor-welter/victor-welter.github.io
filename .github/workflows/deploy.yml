@@ -28,6 +28,20 @@ jobs:
       - run: flutter test
       - run: flutter build web --release
       - run: cp build/web/index.html build/web/404.html
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+        working-directory: tool/smoke_test
+      - run: npx playwright install --with-deps chromium
+        working-directory: tool/smoke_test
+      - run: node smoke_test.js --dir ../../build/web --browser chromium
+        working-directory: tool/smoke_test
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-test-failures
+          path: tool/smoke_test/smoke-failures/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
