@@ -128,6 +128,24 @@ async function runChecks(baseUrl, browserName) {
   });
 
   page.on('pageerror', (err) => {
+    /**
+     * Firefox-only: url_launcher_web's `launchUrl` always opens via
+     * `window.open()` (never a direct/`_self` navigation — confirmed by
+     * reading its source, and by testing that forcing `_self` to dodge this
+     * popup does avoid the error on Firefox/Chromium but silently breaks the
+     * résumé link and semantics tree on WebKit, so it's not a safe app-level
+     * fix). Firefox closes that popup the instant it detects the response is
+     * a download rather than a viewable document, and the Flutter engine's
+     * own popup-lifecycle bookkeeping touches the (already-closing) popup's
+     * `window` object during that handoff, throwing this exact TypeError.
+     * The download itself is unaffected — checkResumeDownload verifies the
+     * file always arrives correctly on every engine including Firefox.
+     */
+    const isKnownFirefoxDownloadPopupRace =
+      browserName === 'firefox' &&
+      currentRoutePath === '/curriculo' &&
+      err.message.includes('access property "a"');
+    if (isKnownFirefoxDownloadPopupRace) return;
     failures.push(`[${currentRoutePath}] pageerror: ${err.message}`);
   });
 
@@ -154,17 +172,19 @@ async function runChecks(baseUrl, browserName) {
     }
   }
 
-  currentRoutePath = '/curriculo';
-  try {
-    await page.goto(baseUrl + '/curriculo', { waitUntil: 'load', timeout: 60000 });
-    await page.waitForTimeout(3000);
-    await enableSemantics(page);
-    await checkResumeDownload(page);
-    console.log(`[${browserName}] résumé PDF download: OK`);
-  } catch (err) {
-    failures.push(`résumé PDF download check failed: ${err.message}`);
-  }
-
+  /**
+   * Theme toggle runs before the résumé download check, not after: on
+   * Firefox, url_launcher_web's popup-then-download (see the pageerror
+   * handler above) leaves this same page's native pointer-input delivery
+   * unreliable for a while afterward — confirmed by reproducing it directly
+   * against the live site: a keyboard-focused Enter/Space or a JS-dispatched
+   * click on the theme toggle still worked every time post-download, only a
+   * real coordinate-based mouse click silently failed to reach the page at
+   * all (zero pointerdown/mousedown/click events observed). That's a
+   * Playwright/Firefox automation artifact tied to the transient popup
+   * window, not a real user-facing bug, but it made this screenshot-diff
+   * check flaky when run after the download. Running it first sidesteps it.
+   */
   currentRoutePath = '/';
   try {
     await page.goto(baseUrl + '/', { waitUntil: 'load', timeout: 60000 });
@@ -174,6 +194,17 @@ async function runChecks(baseUrl, browserName) {
     console.log(`[${browserName}] theme toggle: OK`);
   } catch (err) {
     failures.push(`theme toggle check failed: ${err.message}`);
+  }
+
+  currentRoutePath = '/curriculo';
+  try {
+    await page.goto(baseUrl + '/curriculo', { waitUntil: 'load', timeout: 60000 });
+    await page.waitForTimeout(3000);
+    await enableSemantics(page);
+    await checkResumeDownload(page);
+    console.log(`[${browserName}] résumé PDF download: OK`);
+  } catch (err) {
+    failures.push(`résumé PDF download check failed: ${err.message}`);
   }
 
   await browser.close();
