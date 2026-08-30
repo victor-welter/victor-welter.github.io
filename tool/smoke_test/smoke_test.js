@@ -57,6 +57,40 @@ function screenshotNameFor(routePath) {
   return routePath === '/' ? 'home' : routePath.replace(/\//g, '_');
 }
 
+/**
+ * Headless Chromium (and the other engines) intercept direct navigation to
+ * a PDF URL as a download rather than opening a viewable tab, so we listen
+ * for the download event instead of a popup — confirmed during Fase 5.
+ */
+async function checkResumeDownload(page) {
+  const downloadPromise = page.waitForEvent('download', { timeout: 10000 });
+  await page.getByText('Ver Currículo (PDF)', { exact: false }).click();
+  const download = await downloadPromise;
+  const url = download.url();
+  if (!url.endsWith('assets/documents/curriculo-victor-welter.pdf')) {
+    throw new Error(`résumé download URL looks wrong: ${url}`);
+  }
+}
+
+/**
+ * The toggle button's icon and the theme it applies are both canvas-painted,
+ * so there is no DOM property to diff — a before/after screenshot comparison
+ * is the reliable signal (confirmed empirically against the live site).
+ */
+async function checkThemeToggle(page) {
+  const before = await page.screenshot();
+  const toggle = page.getByRole('button', { name: 'Alternar tema' });
+  if ((await toggle.count()) === 0) {
+    throw new Error('theme toggle button not found in the semantics tree');
+  }
+  await toggle.click();
+  await page.waitForTimeout(800);
+  const after = await page.screenshot();
+  if (Buffer.compare(before, after) === 0) {
+    throw new Error('clicking the theme toggle produced no visible change');
+  }
+}
+
 async function runChecks(baseUrl, browserName) {
   const browser = await ENGINES[browserName].launch();
   const context = await browser.newContext({ acceptDownloads: true });
@@ -118,6 +152,28 @@ async function runChecks(baseUrl, browserName) {
     } else {
       console.log(`[${browserName}] ${route.path}: OK`);
     }
+  }
+
+  currentRoutePath = '/curriculo';
+  try {
+    await page.goto(baseUrl + '/curriculo', { waitUntil: 'load', timeout: 60000 });
+    await page.waitForTimeout(3000);
+    await enableSemantics(page);
+    await checkResumeDownload(page);
+    console.log(`[${browserName}] résumé PDF download: OK`);
+  } catch (err) {
+    failures.push(`résumé PDF download check failed: ${err.message}`);
+  }
+
+  currentRoutePath = '/';
+  try {
+    await page.goto(baseUrl + '/', { waitUntil: 'load', timeout: 60000 });
+    await page.waitForTimeout(3000);
+    await enableSemantics(page);
+    await checkThemeToggle(page);
+    console.log(`[${browserName}] theme toggle: OK`);
+  } catch (err) {
+    failures.push(`theme toggle check failed: ${err.message}`);
   }
 
   await browser.close();
