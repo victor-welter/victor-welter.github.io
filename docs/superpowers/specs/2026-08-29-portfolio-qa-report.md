@@ -56,15 +56,24 @@ static crawler finds essentially no real DOM to check.
   from Task 7 (commit `ba39066`).
 - `.github/workflows/deploy.yml` now builds with
   `flutter build web --release --source-maps`, giving `main.dart.js` a
-  valid source map and resolving the `valid-source-maps` Best Practices
-  finding from Task 9 for our own compiled output (commit `21945dc`).
-  Verified locally with the CI-pinned Flutter 3.47.2: the flag is purely
-  additive, produces a well-formed v3 source map, and the smoke test still
-  passes against the rebuilt output. A second, related sub-issue —
-  `flutter_bootstrap.js` inheriting a dangling `sourceMappingURL=flutter.js.map`
-  comment from Flutter SDK-generated output, which 404s — is not fixable
-  in this repo (the file is SDK-generated, not repo-authored) and was left
-  as-is.
+  valid source map for our own compiled output (commit `21945dc`). This is
+  a genuine production-debugging improvement — a real source map lets us
+  interpret error stack traces from real users — but it does **not** move
+  the Lighthouse Best Practices score: the `valid-source-maps` audit it
+  targets carries **weight 0** in Lighthouse's scoring, and the audit stays
+  red regardless, because its other failing item —
+  `flutter_bootstrap.js`'s inherited `sourceMappingURL=flutter.js.map`
+  comment, which 404s — is unrelated to `--source-maps` and comes from
+  Flutter SDK-generated output, not repo-authored code, so it is not
+  fixable in this repo. Verified locally with the CI-pinned Flutter
+  3.47.2: the flag is purely additive, produces a well-formed v3 source
+  map, and the smoke test still passes against the rebuilt output.
+  The actual, sole cause of the home page's Best Practices score being 82
+  instead of 100 is the `deprecations` audit (`Intl.v8BreakIterator is
+  deprecated`, sourced from `main.dart.js`, i.e. Flutter's compiled web
+  engine code), which carries **weight 5** and is baked into the Flutter
+  SDK's engine at the pinned 3.47.2 version — not fixable from this
+  repository's source.
 
 ## Permanent CI smoke gate
 

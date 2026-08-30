@@ -17,6 +17,7 @@ const ROUTES = [
   { path: '/projetos', expectText: 'Bee Visit Tracking & Counting' },
   { path: '/curriculo', expectText: 'Ver Currículo (PDF)' },
   { path: '/contato', expectText: 'victorwelter2003@gmail.com' },
+  { path: '/rota-que-nao-existe', expectText: 'Página não encontrada' },
 ];
 
 function parseArgs(argv) {
@@ -64,6 +65,14 @@ function screenshotNameFor(routePath) {
  */
 async function checkResumeDownload(page) {
   const downloadPromise = page.waitForEvent('download', { timeout: 10000 });
+  // If the click below throws (e.g. the text was never found because the
+  // page is broken/blank), downloadPromise is left unawaited and rejects on
+  // its own 10s timeout later, as an unhandled rejection that crashes the
+  // whole Node process. Attach a no-op .catch() so that later rejection is
+  // always handled; the `await downloadPromise` below still throws normally
+  // (and is caught by runChecks's try/catch) if the click succeeds but no
+  // download ever arrives.
+  downloadPromise.catch(() => {});
   await page.getByText('Ver Currículo (PDF)', { exact: false }).click();
   const download = await downloadPromise;
   const url = download.url();
