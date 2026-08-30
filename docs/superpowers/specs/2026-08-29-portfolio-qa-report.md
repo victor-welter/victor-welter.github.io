@@ -81,11 +81,14 @@ static crawler finds essentially no real DOM to check.
 running on every push to `main` and failing the build (blocking deploy)
 if any route fails to render, throws a console error, or the theme
 toggle/résumé download breaks. First CI run that included it:
-[link to the GitHub Actions run, filled in during Task 11].
+<https://github.com/victor-welter/victor-welter.github.io/actions/runs/33321344537>
+(conclusion: success — build, test, and the new smoke-test gate all
+passed before the Pages deploy ran). Re-verified against the live site
+afterward with `node smoke_test.js --url https://victor-welter.github.io
+--browser chromium`: all 11 checks OK.
 
 ## Still open (unrelated to this phase)
 
-- BarberApp: needs real project details from Víctor before it can be
-  added to Projetos.
-- Bee Visit Tracking & Counting: `projects_data.dart`'s `links: []` stays
-  empty unless/until that repo is made public.
+- BarberApp and the Bee Visit Tracking & Counting repo's private-repo
+  status: Víctor has decided not to pursue adding BarberApp or expanding
+  Bee Visit's info further — these are closed as non-issues, not deferred.
