@@ -20,6 +20,12 @@ class AppTheme {
   static const Color _darkOnAccent = Color(0xFF0D1117);
   static const Color _darkError = Color(0xFFF85149);
 
+  // New in Fase 9: the exact navy from the VW logo mark, used for
+  // gradients/depth (hero ring, card header strips, the chevron motif) —
+  // never for plain text or button fills, which stay on _darkAccent /
+  // _lightAccent.
+  static const Color _brandNavy = Color(0xFF14368B);
+
   // Light theme colors — neutral/grayscale chrome; the accent is reserved
   // for interactive elements only (links, primary buttons, active/hover
   // states), not general decoration.
@@ -44,6 +50,8 @@ class AppTheme {
       onPrimary: _darkOnAccent,
       secondary: _darkAccent,
       onSecondary: _darkOnAccent,
+      tertiary: _brandNavy,
+      onTertiary: _darkTextPrimary,
       surface: _darkSurface,
       onSurface: _darkTextPrimary,
       // Design spec: dark mode's inactive/unselected nav labels use the
@@ -67,6 +75,8 @@ class AppTheme {
       onPrimary: _lightOnAccent,
       secondary: _lightAccent,
       onSecondary: _lightOnAccent,
+      tertiary: _brandNavy,
+      onTertiary: Colors.white,
       surface: _lightSurface,
       onSurface: _lightTextPrimary,
       // Design spec: light mode's inactive/unselected nav labels use the
@@ -138,4 +148,14 @@ class AppTheme {
   /// explicitly via `Theme.of(context)` is not applicable here; use
   /// `AppTheme.monoTextStyle` directly.
   static TextStyle get monoTextStyle => GoogleFonts.jetBrainsMono();
+
+  /// Large display style for the Home hero's name — bigger and bolder than
+  /// [TextTheme.headlineLarge] so the hero reads as a thesis statement, per
+  /// the Fase 9 redesign. Uncolored, like [monoTextStyle] — callers apply
+  /// color via `.copyWith(color: ...)`.
+  static TextStyle get heroDisplayStyle => GoogleFonts.spaceGrotesk(
+    fontSize: 56,
+    fontWeight: FontWeight.bold,
+    height: 1.05,
+  );
 }
