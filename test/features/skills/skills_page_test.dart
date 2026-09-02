@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:portfolio/core/widgets/section_card.dart';
 import 'package:portfolio/core/widgets/tag_chip.dart';
 import 'package:portfolio/features/skills/skills_page.dart';
 
@@ -18,5 +19,13 @@ void main() {
     expect(find.widgetWithText(TagChip, 'Flutter'), findsOneWidget);
     expect(find.widgetWithText(TagChip, 'Python'), findsOneWidget);
     expect(find.widgetWithText(TagChip, 'Lean Office'), findsOneWidget);
+  });
+
+  testWidgets('wraps each of the 5 categories in a SectionCard', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: SkillsPage()));
+
+    expect(find.byType(SectionCard), findsNWidgets(5));
   });
 }
