@@ -21,6 +21,9 @@ migrate_working_dir/
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be version controlled
 .vscode/
+.claude/
+.agents/
+skills-lock.json
 
 # Flutter/Dart/Pub related
 **/doc/api/
