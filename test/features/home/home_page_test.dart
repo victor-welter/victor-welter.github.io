@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio/core/widgets/hero_photo.dart';
 import 'package:portfolio/features/contact/contact_page.dart';
 import 'package:portfolio/features/home/home_page.dart';
 import 'package:portfolio/features/projects/projects_page.dart';
@@ -39,6 +40,7 @@ void main() {
   ) async {
     await tester.pumpWidget(buildTestApp());
 
+    await tester.ensureVisible(find.widgetWithText(FilledButton, 'Ver Projetos'));
     await tester.tap(find.widgetWithText(FilledButton, 'Ver Projetos'));
     await tester.pumpAndSettle();
 
@@ -50,9 +52,17 @@ void main() {
   ) async {
     await tester.pumpWidget(buildTestApp());
 
+    await tester.ensureVisible(find.widgetWithText(OutlinedButton, 'Entrar em Contato'));
     await tester.tap(find.widgetWithText(OutlinedButton, 'Entrar em Contato'));
     await tester.pumpAndSettle();
 
     expect(find.byType(ContactPage), findsOneWidget);
+  });
+
+  testWidgets('shows the hero photo', (tester) async {
+    await tester.pumpWidget(buildTestApp());
+    await tester.pump();
+
+    expect(find.byType(HeroPhoto), findsOneWidget);
   });
 }
