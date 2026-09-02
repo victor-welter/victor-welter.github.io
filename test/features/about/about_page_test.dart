@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:portfolio/core/widgets/section_card.dart';
 import 'package:portfolio/features/about/about_page.dart';
 
 void main() {
@@ -16,5 +17,11 @@ void main() {
       find.text('Três de Maio, Rio Grande do Sul, Brasil'),
       findsOneWidget,
     );
+  });
+
+  testWidgets('wraps the bio in a SectionCard', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: AboutPage()));
+
+    expect(find.byType(SectionCard), findsOneWidget);
   });
 }
