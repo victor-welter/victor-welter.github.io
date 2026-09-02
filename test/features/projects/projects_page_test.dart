@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:portfolio/core/widgets/section_card.dart';
 import 'package:portfolio/core/widgets/tag_chip.dart';
 import 'package:portfolio/features/projects/projects_page.dart';
 
@@ -30,6 +31,15 @@ void main() {
       await tester.pumpWidget(const MaterialApp(home: ProjectsPage()));
 
       expect(find.byType(TextButton), findsNWidgets(8));
+    },
+  );
+
+  testWidgets(
+    'wraps every project (4 featured + 3 secondary) in a SectionCard',
+    (tester) async {
+      await tester.pumpWidget(const MaterialApp(home: ProjectsPage()));
+
+      expect(find.byType(SectionCard), findsNWidgets(7));
     },
   );
 }
