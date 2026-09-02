@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:portfolio/core/widgets/section_card.dart';
 import 'package:portfolio/features/experience/experience_page.dart';
 
 void main() {
@@ -27,4 +28,12 @@ void main() {
       expect(find.textContaining('Grupo Lactalis'), findsOneWidget);
     },
   );
+
+  testWidgets('wraps each of the 3 primary roles in a SectionCard', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: ExperiencePage()));
+
+    expect(find.byType(SectionCard), findsNWidgets(3));
+  });
 }
