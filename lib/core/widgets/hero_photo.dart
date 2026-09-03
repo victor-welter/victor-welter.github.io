@@ -22,6 +22,18 @@ class HeroPhoto extends StatelessWidget {
         clipBehavior: Clip.none,
         children: [
           Container(
+            // Explicitly square. Without these, the Container sizes itself
+            // to its Image child, and an Image under loose constraints lays
+            // out at the asset's own aspect ratio (the photo is 960x1280
+            // portrait) — BoxFit.cover only controls painting *inside* the
+            // box, not the box's own size. That gave a ~186x248 box inside
+            // the 260x260 Stack, so ClipOval clipped to an ellipse that
+            // bulged past the circular gradient ring, and the badge below
+            // drifted into the 62px of unused space in the Stack's corner.
+            // Forced square, cover crops the portrait photo to fill it,
+            // which is what "cover" is for.
+            width: size,
+            height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: LinearGradient(
@@ -38,9 +50,12 @@ class HeroPhoto extends StatelessWidget {
               ),
             ),
           ),
+          // Sits on the ring's lower-right edge: the circle's 45-degree point
+          // is size * 0.1464 in from both the bottom and the right, and this
+          // offset puts the badge's centre roughly there.
           Positioned(
-            bottom: size * 0.02,
-            right: size * 0.02,
+            bottom: size * 0.10,
+            right: size * 0.10,
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
