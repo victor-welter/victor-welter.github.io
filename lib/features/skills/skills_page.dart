@@ -34,9 +34,17 @@ class SkillsPage extends StatelessWidget {
             const SizedBox(height: 16),
             LayoutBuilder(
               builder: (context, constraints) {
+                // floorToDouble so `columns * cardWidth + spacing *
+                // (columns - 1)` can never exceed maxWidth. The exact
+                // division can land a hair over it (at maxWidth 1552 the
+                // 3-column result sums back to 1552.0000000000002), and Wrap
+                // compares against the constraint strictly — that fraction of
+                // a pixel is enough to push the last card onto its own line,
+                // silently degrading the grid to 2+2+1.
                 final cardWidth =
-                    (constraints.maxWidth - spacing * (columns - 1)) /
-                    columns;
+                    ((constraints.maxWidth - spacing * (columns - 1)) /
+                            columns)
+                        .floorToDouble();
                 return Wrap(
                   spacing: spacing,
                   runSpacing: spacing,
