@@ -62,6 +62,20 @@ class _ContactPageState extends State<ContactPage> {
           ),
           const SizedBox(height: 16),
           FilledButton(onPressed: _sendMessage, child: const Text('Enviar')),
+          const SizedBox(height: 12),
+          // "Enviar" hands the message to the visitor's mail client via a
+          // mailto: link — there is no backend to submit to. On web,
+          // url_launcher_web calls window.open() and reports success whether
+          // or not a mail handler exists, so there is no reliable signal to
+          // drive a success/failure message off. Say up front what the button
+          // does, and repeat the address here so a visitor whose machine has
+          // no mail client configured still has something to act on without
+          // hunting for the panel beside this one.
+          Text(
+            'Isso abrirá seu cliente de e-mail padrão. Se nada acontecer, '
+            'escreva para victorwelter2003@gmail.com.',
+            style: textTheme.bodySmall,
+          ),
         ],
       ),
     );

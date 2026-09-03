@@ -22,4 +22,22 @@ void main() {
       );
     },
   );
+
+  // "Enviar" opens a mailto: link, and url_launcher_web reports success
+  // whether or not the visitor actually has a mail client — so there is no
+  // signal to drive a result message off. This standing hint is the only
+  // thing telling a visitor what the button does, and the only fallback for
+  // one whose machine can't handle mailto:, so it has to stay put.
+  testWidgets('explains what "Enviar" does and repeats the address', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const MaterialApp(home: ContactPage()));
+
+    final hint = find.textContaining('cliente de e-mail padrão');
+    expect(hint, findsOneWidget);
+    expect(
+      tester.widget<Text>(hint).data,
+      contains('victorwelter2003@gmail.com'),
+    );
+  });
 }
