@@ -65,4 +65,29 @@ void main() {
 
     expect(find.byType(HeroPhoto), findsOneWidget);
   });
+
+  // flutter_test's default 800x600 surface is *tablet* under Breakpoints
+  // (isMobile is width <= 599), so every test above exercises the Row
+  // branch only. Narrow widths are where this layout is most likely to
+  // overflow, so pin the Column branch down explicitly.
+  testWidgets('stacks the hero into a Column at mobile width', (tester) async {
+    tester.view.physicalSize = const Size(375, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(buildTestApp());
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+
+    // The mobile branch uses the smaller photo, above the text rather than
+    // beside it.
+    final photo = tester.widget<HeroPhoto>(find.byType(HeroPhoto));
+    expect(photo.size, 200);
+    expect(
+      tester.getBottomLeft(find.byType(HeroPhoto)).dy,
+      lessThanOrEqualTo(tester.getTopLeft(find.text('Víctor Welter')).dy),
+    );
+  });
 }

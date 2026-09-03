@@ -55,4 +55,32 @@ void main() {
     expect(rects[2].top, rects[0].top);
     expect(rects[3].top, greaterThan(rects[0].top));
   });
+
+  // flutter_test's default 800x600 surface is *tablet* under Breakpoints
+  // (isMobile is width <= 599), so the tests above only ever exercise the
+  // 2-column grid. Cover the single-column branch too.
+  testWidgets('lays the grid out one card wide at mobile width', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(375, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(const MaterialApp(home: SkillsPage()));
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+
+    final cards = find.byType(SectionCard);
+    expect(cards, findsNWidgets(5));
+
+    // One column: every card shares the same left edge and each starts
+    // below the one before it.
+    final rects = [for (var i = 0; i < 5; i++) tester.getRect(cards.at(i))];
+    for (var i = 1; i < rects.length; i++) {
+      expect(rects[i].left, rects[0].left);
+      expect(rects[i].top, greaterThanOrEqualTo(rects[i - 1].bottom));
+    }
+  });
 }
