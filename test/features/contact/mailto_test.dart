@@ -45,4 +45,23 @@ void main() {
 
     expect(uri.toString(), contains('subject=Ol%C3%A1'));
   });
+
+  // Spaces must be percent-encoded as %20, never form-encoded as "+".
+  // These assertions run against uri.toString() on purpose: reading back via
+  // uri.queryParameters decodes "+" to a space too, so a form-encoded URI
+  // would pass every read-back assertion above while real mail clients
+  // (Outlook, some webmail) render the "+" literally.
+  test('encodes spaces as %20, not "+" (RFC 6068 mailto, not form data)', () {
+    final uri = buildMailtoUri(
+      name: 'Ana Souza',
+      subject: 'Proposta de projeto',
+      message: 'Olá, gostaria de conversar sobre uma vaga.',
+    );
+
+    final encoded = uri.toString();
+    expect(encoded, isNot(contains('+')));
+    expect(encoded, contains('subject=Proposta%20de%20projeto'));
+    expect(encoded, contains('body=De%3A%20Ana%20Souza'));
+    expect(encoded, contains('Ana%20Souza'));
+  });
 }
