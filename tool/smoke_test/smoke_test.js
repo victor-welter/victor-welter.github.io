@@ -100,6 +100,54 @@ async function checkThemeToggle(page) {
   }
 }
 
+/**
+ * The Contato "Enviar" button calls launchUrl on a mailto: Uri. Per the
+ * Firefox investigation in Fase 8 (task-7-report.md), url_launcher_web
+ * opens external links via window.open() rather than same-tab navigation.
+ * The brief for this check originally expected that same window.open() to
+ * surface as a Playwright `popup` page carrying the mailto: URL, the way
+ * it does for ordinary http(s) links. It doesn't: traced with a raw CDP
+ * Target session, Chromium's browser process *does* create a new
+ * page-type target the instant window.open() runs (with our page as
+ * opener), but because mailto: is an unregistered external protocol in
+ * this headless environment, Chromium intercepts the navigation before it
+ * is ever committed — the target's title/url stay permanently empty, and
+ * Playwright doesn't emit its own `popup` event for it until the browser
+ * itself is torn down (well past any workable timeout), by which point
+ * `popup.url()` is still empty too. Headless Chromium has no shell to hand
+ * mailto: off to, so there's no OS-level "open with mail client" dialog to
+ * fall back on either. The one real, immediate signal available is the
+ * exact argument url_launcher_web passes to window.open() itself, so this
+ * intercepts that call directly instead of trying to observe its outcome.
+ */
+async function checkContactMailto(page) {
+  await page.evaluate(() => {
+    window.__smokeTestOpenCalls = [];
+    const originalOpen = window.open;
+    window.open = function (url, ...rest) {
+      window.__smokeTestOpenCalls.push(String(url));
+      return originalOpen.apply(window, [url, ...rest]);
+    };
+  });
+  await page.getByLabel('Nome', { exact: false }).fill('Visitante de Teste');
+  await page
+    .getByLabel('Assunto', { exact: false })
+    .fill('Assunto de teste do smoke test');
+  await page
+    .getByLabel('Mensagem', { exact: false })
+    .fill('Mensagem de teste do smoke test.');
+  await page.getByText('Enviar', { exact: true }).click();
+  await page.waitForTimeout(1000);
+  const openCalls = await page.evaluate(() => window.__smokeTestOpenCalls);
+  if (openCalls.length === 0) {
+    throw new Error('window.open was never called after clicking Enviar');
+  }
+  const url = openCalls[openCalls.length - 1];
+  if (!url.startsWith('mailto:victorwelter2003@gmail.com')) {
+    throw new Error(`contact mailto URL looks wrong: ${url}`);
+  }
+}
+
 async function runChecks(baseUrl, browserName) {
   const browser = await ENGINES[browserName].launch();
   const context = await browser.newContext({ acceptDownloads: true });
@@ -143,18 +191,22 @@ async function runChecks(baseUrl, browserName) {
      * reading its source, and by testing that forcing `_self` to dodge this
      * popup does avoid the error on Firefox/Chromium but silently breaks the
      * résumé link and semantics tree on WebKit, so it's not a safe app-level
-     * fix). Firefox closes that popup the instant it detects the response is
-     * a download rather than a viewable document, and the Flutter engine's
-     * own popup-lifecycle bookkeeping touches the (already-closing) popup's
-     * `window` object during that handoff, throwing this exact TypeError.
-     * The download itself is unaffected — checkResumeDownload verifies the
-     * file always arrives correctly on every engine including Firefox.
+     * fix). Firefox closes that popup the instant it decides there's nothing
+     * to show in it — a download response on /curriculo, or (confirmed while
+     * building the /contato mailto check) an unregistered mailto: protocol
+     * navigation on /contato — and the Flutter engine's own popup-lifecycle
+     * bookkeeping touches the (already-closing) popup's `window` object
+     * during that handoff, throwing this exact TypeError. Neither real
+     * behavior is affected: checkResumeDownload verifies the résumé file
+     * always arrives on every engine including Firefox, and
+     * checkContactMailto verifies the mailto: URL via the window.open() call
+     * itself rather than relying on the popup surviving.
      */
-    const isKnownFirefoxDownloadPopupRace =
+    const isKnownFirefoxPopupRace =
       browserName === 'firefox' &&
-      currentRoutePath === '/curriculo' &&
+      (currentRoutePath === '/curriculo' || currentRoutePath === '/contato') &&
       err.message.includes('access property "a"');
-    if (isKnownFirefoxDownloadPopupRace) return;
+    if (isKnownFirefoxPopupRace) return;
     failures.push(`[${currentRoutePath}] pageerror: ${err.message}`);
   });
 
@@ -203,6 +255,17 @@ async function runChecks(baseUrl, browserName) {
     console.log(`[${browserName}] theme toggle: OK`);
   } catch (err) {
     failures.push(`theme toggle check failed: ${err.message}`);
+  }
+
+  currentRoutePath = '/contato';
+  try {
+    await page.goto(baseUrl + '/contato', { waitUntil: 'load', timeout: 60000 });
+    await page.waitForTimeout(3000);
+    await enableSemantics(page);
+    await checkContactMailto(page);
+    console.log(`[${browserName}] contact mailto: OK`);
+  } catch (err) {
+    failures.push(`contact mailto check failed: ${err.message}`);
   }
 
   currentRoutePath = '/curriculo';
