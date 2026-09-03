@@ -61,19 +61,11 @@ class AppShell extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Victor Welter'),
           actions: [
-            TextButton(
-              onPressed: () => context.go(home.path),
-              style: TextButton.styleFrom(
-                foregroundColor: navLabelColor(home.path),
-              ),
-              child: Text(
-                home.label,
-                style: TextStyle(
-                  fontWeight: currentPath == home.path
-                      ? FontWeight.bold
-                      : FontWeight.normal,
-                ),
-              ),
+            _NavBarItem(
+              label: home.label,
+              isActive: currentPath == home.path,
+              color: navLabelColor(home.path),
+              onTap: () => context.go(home.path),
             ),
             PopupMenuButton<String>(
               tooltip: 'Mais opções de navegação',
@@ -122,19 +114,11 @@ class AppShell extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   for (final destination in navDestinations)
-                    TextButton(
-                      onPressed: () => context.go(destination.path),
-                      style: TextButton.styleFrom(
-                        foregroundColor: navLabelColor(destination.path),
-                      ),
-                      child: Text(
-                        destination.label,
-                        style: TextStyle(
-                          fontWeight: currentPath == destination.path
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                        ),
-                      ),
+                    _NavBarItem(
+                      label: destination.label,
+                      isActive: currentPath == destination.path,
+                      color: navLabelColor(destination.path),
+                      onTap: () => context.go(destination.path),
                     ),
                 ],
               ),
@@ -199,6 +183,47 @@ class _AppDrawer extends StatelessWidget {
             ),
         ],
       ),
+    );
+  }
+}
+
+class _NavBarItem extends StatelessWidget {
+  const _NavBarItem({
+    required this.label,
+    required this.isActive,
+    required this.color,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool isActive;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TextButton(
+          onPressed: onTap,
+          style: TextButton.styleFrom(foregroundColor: color),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ),
+        AnimatedContainer(
+          key: const Key('nav-active-indicator'),
+          duration: const Duration(milliseconds: 150),
+          height: 2,
+          width: 20,
+          margin: const EdgeInsets.only(top: 2),
+          color: isActive ? color : Colors.transparent,
+        ),
+      ],
     );
   }
 }

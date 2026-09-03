@@ -69,6 +69,36 @@ void main() {
     },
   );
 
+  testWidgets(
+    'desktop nav shows a colored indicator under the active item only',
+    (tester) async {
+      await pumpShell(tester, const Size(1300, 800));
+
+      final colorScheme = Theme.of(
+        tester.element(find.byType(AppShell)),
+      ).colorScheme;
+
+      final indicators = tester.widgetList<AnimatedContainer>(
+        find.byKey(const Key('nav-active-indicator')),
+      );
+      // AnimatedContainer has no public `color` field: its constructor folds
+      // `color` into `decoration` (`BoxDecoration(color: color)`), exposing
+      // only `decoration` — unlike `Container`, which keeps `color` as its
+      // own field. Read the color back out of the resolved decoration.
+      Color? indicatorColor(AnimatedContainer c) =>
+          (c.decoration as BoxDecoration?)?.color;
+      final activeCount = indicators
+          .where((c) => indicatorColor(c) == colorScheme.primary)
+          .length;
+      final transparentCount = indicators
+          .where((c) => indicatorColor(c) == Colors.transparent)
+          .length;
+
+      expect(activeCount, 1);
+      expect(transparentCount, navDestinations.length - 1);
+    },
+  );
+
   group('tablet widths (600-1024px) show Home + a "Mais" overflow menu', () {
     for (final width in <double>[650, 800, 950]) {
       testWidgets('at ${width.toInt()}px', (tester) async {
