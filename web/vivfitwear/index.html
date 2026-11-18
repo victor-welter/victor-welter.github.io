@@ -257,6 +257,7 @@ body.bf .seg .dot{box-shadow:none}
 .szs.cj{flex-direction:column;gap:4px}.szs.cj div{display:flex;flex-wrap:wrap;gap:4px;align-items:center}.szs.cj em{font-style:normal;font-size:11.5px;color:var(--mute);min-width:58px}
 .cjl{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--mute);flex:1;min-width:120px}.cjl select{min-width:0;width:100%}
 .mo{font-size:12.5px;color:var(--mute);margin-top:4px;line-height:1.4}
+.bfwhen{display:inline-block;margin:24px auto 0;border:1px solid #C5B4A4;border-radius:99px;padding:10px 24px;color:#F9E8E1;font-size:15px;letter-spacing:.08em}
 /* impressão */
 #printroot{display:none}
 @page{size:210mm 297mm;margin:0}
@@ -301,7 +302,7 @@ body.bf .seg .dot{box-shadow:none}
 <section class="bfhero" id="bfHero" hidden>
   <p class="eyebrow">Black Friday · pronta entrega</p>
   <h1>BLACK <span>VIV</span></h1>
-  <div class="bfrules"></div>
+  <p class="bfwhen"></p>
   <p class="bffine"></p>
 </section>
 <section class="hero" id="hero">
@@ -401,7 +402,7 @@ try{var sv=JSON.parse(localStorage.getItem('viv_sel')||'{}');Object.keys(sv).for
 function saveSel(){try{localStorage.setItem('viv_sel',JSON.stringify(sel))}catch(e){}}
 
 /* campanha BLACK VIV: troque BF.on por true para ativar (ou abra o catálogo com ?blackviv=1 para ver antes) */
-var BF={on:false,from:'2026-11-18T00:00:00-03:00',to:'2026-11-30T23:59:59-03:00',high:250,leg:20,top:20,rest:15};
+var BF={on:false,from:'2026-11-18T00:00:00-03:00',to:'2026-11-30T23:59:59-03:00',ate:'30/11',high:250,leg:20,top:20,rest:15};
 /* peças novas do atacado ficam ocultas até a aprovação dos preços: mude SHOW_PP para true (ou abra com ?novos=1 para ver) */
 var SHOW_PP=false;
 function vis(d){return !d.h&&(!d.pp||SHOW_PP||/[?&]novos=1(&|$)/.test(location.search))}
@@ -486,8 +487,8 @@ function renderCombo(d){
   [].forEach.call(el.querySelectorAll('.ci'),function(b){b.onclick=function(){openMod(DATA[+b.getAttribute('data-i')])}});
   $('mLook').onclick=function(){var n=0;[d].concat(c).forEach(function(x){if(sel[x.i]===undefined){sel[x.i]=defSize(x);n++}});saveSel();$('nSel').textContent=Object.keys(sel).length;drawGridKeep();toast(n+(n===1?' peça adicionada':' peças adicionadas')+' à sua seleção');$('mFav').textContent='Remover da minha seleção'}}
 function initBF(){if(!BFA)return;document.body.classList.add('bf');var h=$('bfHero');h.hidden=false;$('hero').hidden=true;
-  h.querySelector('.bfrules').innerHTML='<span><b>'+BF.leg+'% OFF</b>Leggings</span><span><b>'+BF.top+'% OFF</b>Peças de maior valor</span><span><b>'+BF.rest+'% OFF</b>Demais peças</span>';
-  h.querySelector('.bffine').textContent='Somente peças de pronta entrega marcadas na campanha, nos tamanhos em estoque. Peças de maior valor: a partir de '+brl(BF.high)+'. Enquanto durar o estoque.';
+  h.querySelector('.bfwhen').textContent=BF.ate?'Promoção válida até '+BF.ate:'Promoção por tempo limitado';
+  h.querySelector('.bffine').textContent='Descontos nas peças de pronta entrega, enquanto durar o estoque.';
   document.title='BLACK VIV · VIV Fitwear'}
 function match(d,skip){
   if(!vis(d))return false;
